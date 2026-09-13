@@ -14,8 +14,8 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.Registries;
+import net.minecraft.item.Items;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryEntryLookup;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -31,51 +31,55 @@ import net.minecraft.util.math.BlockPos;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Function;
 
 public class MindazMod implements ModInitializer {
 
     public static final String MOD_ID = "mindaz";
 
-    public static final MindazItem MINDAZ = new MindazItem(
-            new Item.Settings()
-    );
-
     private static final List<TemporaryBlock> TEMPORARY_BLOCKS =
             new ArrayList<>();
 
-    // 10 секунд = 200 игровых тиков
     private static final int WOOL_TIME = 10 * 20;
+
+    public static final MindazItem MINDAZ = register(
+            "mindaz",
+            MindazItem::new,
+            new Item.Settings()
+    );
+
+    private static MindazItem register(
+            String name,
+            Function<Item.Settings, MindazItem> factory,
+            Item.Settings settings
+    ) {
+        RegistryKey<Item> key = RegistryKey.of(
+                RegistryKeys.ITEM,
+                Identifier.of(MOD_ID, name)
+        );
+
+        return Items.register(
+                key,
+                factory,
+                settings
+        );
+    }
 
     @Override
     public void onInitialize() {
 
-        Registry.register(
-                Registries.ITEM,
-                Identifier.of(MOD_ID, "mindaz"),
-                MINDAZ
-        );
-
-        // Обрабатываем исчезновение временной шерсти
         ServerTickEvents.END_SERVER_TICK.register(
                 MindazMod::tickTemporaryBlocks
         );
 
-        // Команда /mindaz
         CommandRegistrationCallback.EVENT.register(
-                (dispatcher, registryAccess, environment) -> {
-                    registerCommands(
-                            dispatcher,
-                            registryAccess,
-                            environment
-                    );
-                }
+                (dispatcher, registryAccess, environment) ->
+                        registerCommands(dispatcher)
         );
     }
 
     private static void registerCommands(
-            CommandDispatcher<ServerCommandSource> dispatcher,
-            CommandRegistryAccess registryAccess,
-            CommandManager.RegistrationEnvironment environment
+            CommandDispatcher<ServerCommandSource> dispatcher
     ) {
         dispatcher.register(
                 CommandManager.literal("mindaz")
@@ -85,11 +89,10 @@ public class MindazMod implements ModInitializer {
                                     context.getSource()
                                             .getPlayerOrThrow();
 
-                            ItemStack stack =
-                                    createMindaz(
-                                            context.getSource()
-                                                    .getServer()
-                                    );
+                            ItemStack stack = createMindaz(
+                                    context.getSource()
+                                            .getServer()
+                            );
 
                             player.getInventory()
                                     .offerOrDrop(stack);
@@ -113,9 +116,7 @@ public class MindazMod implements ModInitializer {
 
         RegistryEntryLookup<Enchantment> enchantments =
                 server.getRegistryManager()
-                        .getOrThrow(
-                                RegistryKeys.ENCHANTMENT
-                        );
+                        .getOrThrow(RegistryKeys.ENCHANTMENT);
 
         RegistryEntry<Enchantment> sharpness =
                 enchantments.getOrThrow(
@@ -157,7 +158,6 @@ public class MindazMod implements ModInitializer {
             BlockState oldState =
                     world.getBlockState(pos);
 
-            // Не заменяем существующие блоки
             if (!oldState.isAir()) {
                 continue;
             }
@@ -195,8 +195,6 @@ public class MindazMod implements ModInitializer {
                 continue;
             }
 
-            // Возвращаем исходный блок только если
-            // шерсть всё ещё находится на этом месте.
             if (block.world()
                     .getBlockState(block.pos())
                     .isOf(Blocks.WHITE_WOOL)) {
