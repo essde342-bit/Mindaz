@@ -1,7 +1,28 @@
 pluginManagement {
     repositories {
-        maven { url = "https://maven.fabricmc.net/" }
+        maven {
+            name = "Fabric"
+            url = uri("https://maven.fabricmc.net/")
+        }
         gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+
+    repositories {
+        maven {
+            name = "Fabric"
+            url = uri("https://maven.fabricmc.net/")
+        }
+
+        maven {
+            name = "Mojang"
+            url = uri("https://libraries.minecraft.net/")
+        }
+
         mavenCentral()
     }
 }
@@ -10,4 +31,4 @@ plugins {
     id "fabric-loom" version "1.10.1"
 }
 
-rootProject.name = "mindaz"
+rootProject.name = "Mindaz"
