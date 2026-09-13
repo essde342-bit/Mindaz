@@ -9,6 +9,10 @@ pluginManagement {
     }
 }
 
+plugins {
+    id "fabric-loom" version "1.10.1"
+}
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
 
@@ -25,10 +29,6 @@ dependencyResolutionManagement {
 
         mavenCentral()
     }
-}
-
-plugins {
-    id "fabric-loom" version "1.10.1"
 }
 
 rootProject.name = "Mindaz"
