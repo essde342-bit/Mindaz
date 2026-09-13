@@ -1,1 +1,24 @@
 
+{
+  "schemaVersion": 1,
+  "id": "mindaz",
+  "version": "${version}",
+  "name": "Mindaz",
+  "description": "Оружие Mindaz для Minecraft 1.21.4",
+  "authors": [
+    "To4noHe_BadBoy"
+  ],
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.mindaz.mod.MindazMod"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.10",
+    "minecraft": "1.21.4",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}
