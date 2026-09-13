@@ -15,8 +15,8 @@ import net.minecraft.enchantment.Enchantments;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryEntryLookup;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.MinecraftServer;
@@ -50,7 +50,7 @@ public class MindazMod implements ModInitializer {
 
     private static MindazItem register(
             String name,
-            Function<Item.Settings, MindazItem> factory,
+            Function<Item.Settings, Item> factory,
             Item.Settings settings
     ) {
         RegistryKey<Item> key = RegistryKey.of(
@@ -58,7 +58,7 @@ public class MindazMod implements ModInitializer {
                 Identifier.of(MOD_ID, name)
         );
 
-        return Items.register(
+        return (MindazItem) Items.register(
                 key,
                 factory,
                 settings
